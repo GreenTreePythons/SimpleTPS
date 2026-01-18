@@ -10,7 +10,7 @@ namespace _Scripts.Player.FSM.Locomotion
 
         public override void Enter()
         {
-            Fsm.Animation.PlayAnimation(PlayerStateType.Walk);
+            
         }
 
         public override void Tick(in PlayerInputSnapshot input, float dt)

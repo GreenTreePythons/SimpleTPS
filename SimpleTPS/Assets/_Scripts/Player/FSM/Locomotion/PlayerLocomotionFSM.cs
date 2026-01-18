@@ -21,7 +21,6 @@ namespace _Scripts.Player.FSM.Locomotion
         private readonly float m_SprintSpeed;
         private float m_Yaw;
 
-        // 튜닝 파라미터(모바일 감도/품질에 중요)
         private readonly float m_LookSensitivity;
         private readonly float m_TurnSharpness; // 0이면 즉시, >0이면 부드럽게
 
@@ -66,7 +65,7 @@ namespace _Scripts.Player.FSM.Locomotion
         public void ChangeState(LocomotionBaseState next)
         {
             if (next == m_Current) return;
-            Debug.Log($"Change state: {m_Current.GetType().Name} to {next.GetType().Name}");
+            
             m_Current.Exit();
             m_Current = next;
             m_Current.Enter();
@@ -79,8 +78,7 @@ namespace _Scripts.Player.FSM.Locomotion
                 return;
 
             // -1~1 입력 정규화(대각선 속도 보정)
-            if (move.sqrMagnitude > 1f)
-                move.Normalize();
+            if (move.sqrMagnitude > 1f) move.Normalize();
 
             Vector3 forward = m_CameraTransform != null ? m_CameraTransform.forward : Owner.forward;
             Vector3 right   = m_CameraTransform != null ? m_CameraTransform.right   : Owner.right;
@@ -95,10 +93,8 @@ namespace _Scripts.Player.FSM.Locomotion
 
             Vector3 delta = worldDir * speed * dt;
 
-            if (m_Controller != null)
-                m_Controller.Move(delta);
-            else
-                Owner.position += delta; // fallback
+            if (m_Controller != null) m_Controller.Move(delta);
+            else Owner.position += delta; // fallback
         }
 
         public float GetWalkSpeed() => m_WalkSpeed;

@@ -1408,7 +1408,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0.36, y: 0.120000005, z: 0}
-  m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
+  m_LocalScale: {x: 0.15, y: 0.15, z: 0.15}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 435411198}
@@ -2681,7 +2681,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::_Scripts.Player.Controller.PlayerCameraController
   m_AimImage: {fileID: 102351715}
   m_AimTargetObj: {fileID: 1021040370}
-  m_AimDistance: 10
+  m_AimDistance: 50
   m_DefaultCamera: {fileID: 1642845923}
   m_ShoulderCamera: {fileID: 1933158914}
   m_ADSCamera: {fileID: 996995527}
@@ -3007,7 +3007,7 @@ Transform:
   m_GameObject: {fileID: 2143984288}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.8, y: -3.43, z: 10.13}
+  m_LocalPosition: {x: -0.8, y: 1.56, z: 10.13}
   m_LocalScale: {x: 2, y: 2, z: 2}
   m_ConstrainProportionsScale: 0
   m_Children: []

@@ -38,8 +38,6 @@ namespace _Scripts.Player.Controller
             UpdateCamera();
 
             bool isAimHit = Physics.Raycast(m_CameraTransform.position, m_CameraTransform.forward, out RaycastHit hit, m_AimDistance);
-            m_IsAimHitted = isAimHit;
-            UpdateAimImage(isAimHit);
             UpdateAimTarget(isAimHit, hit);
         }
 
@@ -72,14 +70,14 @@ namespace _Scripts.Player.Controller
             }
         }
 
-        private void UpdateAimImage(bool isAimHit)
-        {
-            if (m_IsAimHitted == isAimHit) return;
-            m_AimImage.color = isAimHit ? Color.red : Color.white;
-        }
-
         private void UpdateAimTarget(bool isAimHit, RaycastHit hit)
         {
+            if (m_IsAimHitted != isAimHit)
+            {
+                m_IsAimHitted = isAimHit;
+                m_AimImage.color = isAimHit ? Color.red : Color.white;    
+            }
+            
             Vector3 targetPos = isAimHit
                 ? hit.point
                 : (m_CameraTransform.position + m_CameraTransform.forward * m_AimDistance);

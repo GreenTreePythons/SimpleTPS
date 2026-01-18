@@ -10,12 +10,33 @@ namespace _Scripts.Player.FSM.Locomotion
 
         public override void Enter()
         {
-            Fsm.Animation.PlayAnimation(PlayerStateType.Sprint);
+            
         }
 
         public override void Tick(in PlayerInputSnapshot input, float dt)
         {
             base.Tick(input, dt);
+            
+            Vector2 move = new Vector2(input.Move.x, input.Move.y * 2f);
+            float mag = Mathf.Clamp01(move.magnitude);
+
+            float speed01 = mag;
+            float damp = 0.08f;
+
+            Fsm.Animation.SetLocomotion(move, speed01, damp, dt);
+
+            if (move.sqrMagnitude <= 0.0001f)
+            {
+                Fsm.ChangeState(Fsm.Idle);
+                return;
+            }
+
+            if (!input.IsSprintPressed)
+            {
+                Fsm.ChangeState(Fsm.Walk);
+            }
+            
+            Fsm.Move(input, dt, Fsm.GetWalkSpeed());
         }
     }
 }

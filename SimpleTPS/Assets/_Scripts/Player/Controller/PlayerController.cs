@@ -7,7 +7,7 @@ namespace _Scripts.Player.Controller
 {
     public enum PlayerStateType
     {
-        Idle, Walk, Sprint, Reload, Shoot, AimingIdle
+        Idle, Walk, Run, Reload, Shoot, AimingIdle
     }
     
     [RequireComponent(typeof(CharacterController))]
