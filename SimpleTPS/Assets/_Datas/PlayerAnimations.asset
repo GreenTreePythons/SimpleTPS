@@ -33,3 +33,7 @@ MonoBehaviour:
     m_StateName: Shoot
     m_Clip: {fileID: 7400000, guid: a3d972d8af6d2724cb3e37ec000c5e95, type: 2}
     m_NormalizedTransitionDuration: 0.15
+  - m_PlayerStateType: 5
+    m_StateName: AimingIdle
+    m_Clip: {fileID: 7400000, guid: 5121ec0a3db842a42a1f119fb3614583, type: 2}
+    m_NormalizedTransitionDuration: 0.15

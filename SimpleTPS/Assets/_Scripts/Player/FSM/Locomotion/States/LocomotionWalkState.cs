@@ -31,7 +31,7 @@ namespace _Scripts.Player.FSM.Locomotion
                 return;
             }
 
-            if (input.SprintHeld)
+            if (input.IsSprintPressed)
             {
                 Fsm.ChangeState(Fsm.Sprint);
             }

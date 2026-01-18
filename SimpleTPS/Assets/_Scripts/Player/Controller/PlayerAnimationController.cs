@@ -2,9 +2,7 @@
 using UnityEngine;
 
 namespace _Scripts.Player.Controller
-{
-    public enum AnimationParameterType { MoveSpeed, ShootSpeed }
-     
+{ 
     [RequireComponent(typeof(Animator))]
     public class PlayerAnimationController : MonoBehaviour
     {
@@ -36,18 +34,24 @@ namespace _Scripts.Player.Controller
 
         public void PlayAnimation(PlayerStateType state)
         {
-            if (m_Animator == null || m_AnimationData == null) return;
-
-            var clip = m_AnimationData.GetClip(state);
-            if (clip == null)
-            {
-                Debug.LogWarning($"[PlayerAnimationController] Clip not found: {state}");
-                return;
-            }
-
-            m_Animator.CrossFade(clip.StateName, clip.TransitionDuration);
+            if (!TryGetPlayerAnimation(state, out var animation)) return;
+            m_Animator.CrossFade(animation.StateName, animation.TransitionDuration);
         }
 
+        public void PlayAnimation(PlayerStateType state, int layerIndex, float weight)
+        {
+            if (!TryGetPlayerAnimation(state, out var animation)) return;
+            SetLayerWeight(layerIndex, weight);
+            m_Animator.CrossFade(animation.StateName, animation.TransitionDuration, layerIndex);
+        }
+
+        public float GetAnimationPlayTime(PlayerStateType state, float animationSpeed = 1f)
+        {
+            if (!TryGetPlayerAnimation(state, out var animation)) return 0f;
+
+            return animation.Clip.length / Mathf.Max(0.0001f, animationSpeed);
+        }
+        
         public void SetLayerWeight(int layerIndex, float weight)
         {
             if (layerIndex < 0 || layerIndex >= m_Animator.layerCount)
@@ -59,22 +63,15 @@ namespace _Scripts.Player.Controller
             m_Animator.SetLayerWeight(layerIndex, weight);
         }
 
-        public float GetAnimationPlayTime(PlayerStateType state, float animationSpeed = 1f)
+        private bool TryGetPlayerAnimation(PlayerStateType state, out PlayerAnimation animation)
         {
-            if (m_AnimationData == null)
-            {
-                Debug.LogWarning($"[PlayerAnimationController] AnimationData is null");
-                return 0f;
-            }
-
-            var clip = m_AnimationData.GetClip(state);
-            if (clip == null || clip.Clip == null)
+            animation = m_AnimationData.GetClip(state);
+            if (animation == null)
             {
                 Debug.LogWarning($"[PlayerAnimationController] animation clip is null");
-                return 0f;
+                return false;
             }
-
-            return clip.Clip.length / Mathf.Max(0.0001f, animationSpeed);
+            return true;
         }
     }
 }

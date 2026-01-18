@@ -44,11 +44,11 @@
                 },
                 {
                     "name": "Sprint",
-                    "type": "PassThrough",
+                    "type": "Button",
                     "id": "334de6d8-733c-4ff1-a4ab-00072df5f662",
                     "expectedControlType": "",
                     "processors": "",
-                    "interactions": "",
+                    "interactions": "Press(behavior=2)",
                     "initialStateCheck": false
                 },
                 {
@@ -198,7 +198,7 @@
                     "name": "",
                     "id": "3feef4b9-3cc8-4222-b796-49234ea509fe",
                     "path": "<Mouse>/leftButton",
-                    "interactions": "",
+                    "interactions": "Press(behavior=2)",
                     "processors": "",
                     "groups": "",
                     "action": "Shoot",
@@ -209,7 +209,7 @@
                     "name": "",
                     "id": "b37b110d-cb6d-4abc-870f-22fa75341d3e",
                     "path": "<Keyboard>/#(R)",
-                    "interactions": "",
+                    "interactions": "Press",
                     "processors": "",
                     "groups": "",
                     "action": "Reload",

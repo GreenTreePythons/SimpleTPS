@@ -22,7 +22,7 @@ namespace _Scripts.Player.FSM.Locomotion
             // 이동 입력이 생기면 Walk/Sprint
             if (input.Move.sqrMagnitude > 0.0001f)
             {
-                Fsm.ChangeState(input.SprintHeld ? Fsm.Sprint : Fsm.Walk);
+                Fsm.ChangeState(input.IsSprintPressed ? Fsm.Sprint : Fsm.Walk);
             }
         }
     }

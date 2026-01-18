@@ -15,7 +15,7 @@ namespace _Scripts.Player.FSM.Locomotion
         
         private LocomotionBaseState m_Current;
         private readonly CharacterController m_Controller;
-        private readonly Transform m_Camera;
+        private readonly Transform m_CameraTransform;
         
         private readonly float m_WalkSpeed;
         private readonly float m_SprintSpeed;
@@ -28,7 +28,7 @@ namespace _Scripts.Player.FSM.Locomotion
         public PlayerLocomotionFSM(
             Transform owner,
             CharacterController controller,
-            Transform cameraTransform,
+            PlayerAimController aim,
             PlayerAnimationController animation,
             float lookSensitivity,
             float turnSharpness,
@@ -37,7 +37,7 @@ namespace _Scripts.Player.FSM.Locomotion
         {
             Owner = owner;
             m_Controller = controller;
-            m_Camera = cameraTransform;
+            m_CameraTransform = aim.GetCameraTransform();
             Animation = animation;
 
             m_WalkSpeed = walkSpeed;
@@ -82,8 +82,8 @@ namespace _Scripts.Player.FSM.Locomotion
             if (move.sqrMagnitude > 1f)
                 move.Normalize();
 
-            Vector3 forward = m_Camera != null ? m_Camera.forward : Owner.forward;
-            Vector3 right   = m_Camera != null ? m_Camera.right   : Owner.right;
+            Vector3 forward = m_CameraTransform != null ? m_CameraTransform.forward : Owner.forward;
+            Vector3 right   = m_CameraTransform != null ? m_CameraTransform.right   : Owner.right;
 
             forward.y = 0f;
             right.y = 0f;

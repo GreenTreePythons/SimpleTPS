@@ -7,26 +7,26 @@ namespace _Scripts.Player.Input
         public readonly Vector2 Move;
         public readonly Vector2 LookDelta;
 
-        public readonly bool SprintHeld;
-        public readonly bool AimHeld;
-        public readonly bool ShootHeld;
-        public readonly bool ReloadPressed;
+        public readonly bool IsSprintPressed;
+        public readonly bool IsADSMode;
+        public readonly bool IsShootPressed;
+        public readonly bool IsReloadPressed;
 
         public PlayerInputSnapshot(
             Vector2 move,
             Vector2 lookDelta,
-            bool sprintHeld,
-            bool aimHeld,
-            bool shootHeld,
-            bool reloadPressed)
+            bool isSprintPressed,
+            bool isADSMode,
+            bool isShootPressed,
+            bool isReloadPressed)
         {
             Move = move;
             LookDelta = lookDelta;
 
-            SprintHeld = sprintHeld;
-            AimHeld = aimHeld;
-            ShootHeld = shootHeld;
-            ReloadPressed = reloadPressed;
+            IsSprintPressed = isSprintPressed;
+            IsADSMode = isADSMode;
+            IsShootPressed = isShootPressed;
+            IsReloadPressed = isReloadPressed;
         }
     }
 }

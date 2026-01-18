@@ -2,7 +2,7 @@
 
 namespace _Scripts.Player.FSM.Locomotion
 {
-    public class LocomotionBaseState
+    public abstract class LocomotionBaseState
     {
         protected readonly PlayerLocomotionFSM Fsm;
 
