@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0fe98a396d3141d4c99824ff1ab6f379, type: 3}
+  m_Name: PlayerAnimationsConfig
+  m_EditorClassIdentifier: Assembly-CSharp::_Datas.PlayerAnimations
+  m_PlayerAnimations:
+  - m_PlayerStateType: 0
+    m_StateName: AimingIdle
+    m_Clip: {fileID: 7400000, guid: 5121ec0a3db842a42a1f119fb3614583, type: 2}
+    m_NormalizedTransitionDuration: 0.15
+  - m_PlayerStateType: 1
+    m_StateName: Walking
+    m_Clip: {fileID: 7400000, guid: cbd582f9876db18428cfb31977811872, type: 2}
+    m_NormalizedTransitionDuration: 0.15
+  - m_PlayerStateType: 2
+    m_StateName: Run
+    m_Clip: {fileID: 7400000, guid: ad2ef81f393210a4db53f6812f5206e0, type: 2}
+    m_NormalizedTransitionDuration: 0.15
+  - m_PlayerStateType: 3
+    m_StateName: Reload
+    m_Clip: {fileID: 7400000, guid: 0637690f179c1d54592992c67f1ddc61, type: 2}
+    m_NormalizedTransitionDuration: 0.15
+  - m_PlayerStateType: 4
+    m_StateName: Shoot
+    m_Clip: {fileID: 7400000, guid: a3d972d8af6d2724cb3e37ec000c5e95, type: 2}
+    m_NormalizedTransitionDuration: 0.15
+  - m_PlayerStateType: 5
+    m_StateName: AimingIdle
+    m_Clip: {fileID: 7400000, guid: 5121ec0a3db842a42a1f119fb3614583, type: 2}
+    m_NormalizedTransitionDuration: 0.15

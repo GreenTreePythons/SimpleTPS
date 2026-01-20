@@ -1,0 +1,2 @@
+D:\UnityWorkSpace\SimpleTPS\SimpleTPS\Library\Bee\Android\Prj\IL2CPP\Gradle\unityLibrary\src\main\cpp\CMakeLists.txt
+D:\UnityWorkSpace\SimpleTPS\SimpleTPS\Library\Bee\Android\Prj\IL2CPP\Gradle\unityLibrary\src\main\cpp\GameActivity\CMakeLists.txt
