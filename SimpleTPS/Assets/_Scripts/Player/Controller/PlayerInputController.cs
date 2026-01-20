@@ -8,21 +8,28 @@ namespace _Scripts.Player.Controller
     [RequireComponent(typeof(PlayerInput))]
     public class PlayerInputController : MonoBehaviour
     {
-        public Vector2 Move { get; private set; }
+        [SerializeField] private PlayerInputUIBinder m_PlayerInputUIBinder;
+        
+        public Vector2 MoveDelta { get; private set; }
         public Vector2 LookDelta { get; private set; }
 
         public bool IsSprintPressed { get; private set; }
         public bool IsADSMode { get; private set; }
         public bool IsShootPressed { get; private set; }
 
-        private bool m_IsReloadReady;
+        private bool m_IsRequestedReload;
+
+        public void Awake()
+        {
+            m_PlayerInputUIBinder.Initialize(this);
+        }
         
         // Locomotion
-        private void OnMove(InputValue value) => Move = value.Get<Vector2>();
-        private void OnLook(InputValue value) => LookDelta = value.Get<Vector2>();
-        private void OnSprint(InputValue value) => IsSprintPressed = value.isPressed;
+        private void OnMove(InputValue value) => SetMove(value.Get<Vector2>());
+        private void OnLook(InputValue value) => SetLookDelta(value.Get<Vector2>());
+        private void OnSprint(InputValue value) => SetSprintHeld(value.isPressed);
         
-        public void SetMove(Vector2 move) => Move = move;
+        public void SetMove(Vector2 move) => MoveDelta = move;
         public void SetLookDelta(Vector2 lookDelta) => LookDelta = lookDelta;
         public void SetSprintHeld(bool isPressed) => IsSprintPressed = isPressed;
         
@@ -39,23 +46,23 @@ namespace _Scripts.Player.Controller
 
         public void SetADSMode() => IsADSMode = !IsADSMode;
         public void SetShoot(bool isPressed) => IsShootPressed = isPressed;
-        public void RequestReload() => m_IsReloadReady = true;
+        public void RequestReload() => m_IsRequestedReload = true;
 
-        private bool ReloadUpdated()
+        private bool IsReloadReady()
         {
-            if (!m_IsReloadReady) return false;
-            m_IsReloadReady = false;
+            if (!m_IsRequestedReload) return false;
+            m_IsRequestedReload = false;
             return true;
         }
 
         public PlayerInputSnapshot CaptureSnapshot() => new PlayerInputSnapshot
         (
-            Move,
+            MoveDelta,
             LookDelta,
             IsSprintPressed,
             IsADSMode,
             IsShootPressed,
-            ReloadUpdated()
+            IsReloadReady()
         );
     }
 }

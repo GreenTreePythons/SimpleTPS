@@ -1,5 +1,4 @@
-﻿using _Scripts.Player.Controller;
-using _Scripts.Player.Input;
+﻿using _Scripts.Player.Input;
 using UnityEngine;
 
 namespace _Scripts.Player.FSM.Locomotion
@@ -19,11 +18,10 @@ namespace _Scripts.Player.FSM.Locomotion
             
             Vector2 move = new Vector2(input.Move.x, input.Move.y * 2f);
             float mag = Mathf.Clamp01(move.magnitude);
-
-            float speed01 = mag;
+            float speed = mag;
             float damp = 0.08f;
 
-            Fsm.Animation.SetLocomotion(move, speed01, damp, dt);
+            Fsm.SetLocomotion(move, speed, damp, dt);
 
             if (move.sqrMagnitude <= 0.0001f)
             {
@@ -34,9 +32,10 @@ namespace _Scripts.Player.FSM.Locomotion
             if (!input.IsSprintPressed)
             {
                 Fsm.ChangeState(Fsm.Walk);
+                return;
             }
             
-            Fsm.Move(input, dt, Fsm.GetWalkSpeed());
+            Fsm.Move(input, dt, Fsm.GetSprintSpeed());
         }
     }
 }

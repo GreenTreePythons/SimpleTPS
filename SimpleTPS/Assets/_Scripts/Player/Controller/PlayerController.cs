@@ -4,26 +4,18 @@ using _Scripts.Player.Input;
 using UnityEngine;
 
 namespace _Scripts.Player.Controller
-{
-    public enum PlayerStateType
-    {
-        Idle, Walk, Run, Reload, Shoot, AimingIdle
-    }
-    
+{   
     [RequireComponent(typeof(CharacterController))]
     [RequireComponent(typeof(PlayerInputController))]
     [RequireComponent(typeof(PlayerAnimationController))]
     public class PlayerController : MonoBehaviour
-    {
-        [SerializeField] private float m_LookSensitivity = 0.1f;
-        [SerializeField] private float m_TurnSharpness = 0f;
-        [SerializeField] private float m_RunSpeed = 2f;
-        [SerializeField] private float m_WalkSpeed = 1f;
-        
+    {  
         private CharacterController m_CharacterController;
         private PlayerInputController m_PlayerInputController;
         private PlayerAnimationController m_PlayerAnimationController;
         private PlayerAimController m_PlayerAimController;
+        private PlayerStatController m_PlayerStatController;
+        private PlayerWeaponController m_PlayerWeaponController;
         private PlayerInputSnapshot m_LastSnapshot;
         
         private PlayerLocomotionFSM m_LocomotionFSM;
@@ -35,16 +27,14 @@ namespace _Scripts.Player.Controller
             m_PlayerInputController = GetComponent<PlayerInputController>();
             m_PlayerAnimationController = GetComponent<PlayerAnimationController>();
             m_PlayerAimController = GetComponent<PlayerAimController>();
+            m_PlayerStatController = GetComponent<PlayerStatController>();
+            m_PlayerWeaponController = GetComponent<PlayerWeaponController>();
             
             m_LocomotionFSM = new PlayerLocomotionFSM(
-                transform,
                 m_CharacterController,
                 m_PlayerAimController,
                 m_PlayerAnimationController,
-                m_LookSensitivity,
-                m_TurnSharpness,
-                m_WalkSpeed,
-                m_RunSpeed
+                m_PlayerStatController
             );
 
             m_PlayerActionFSM = new PlayerActionFSM(m_PlayerAnimationController);
@@ -67,6 +57,7 @@ namespace _Scripts.Player.Controller
             m_LocomotionFSM.Tick(m_LastSnapshot, Time.deltaTime);
             m_PlayerActionFSM.Tick(m_LastSnapshot, Time.deltaTime);
             m_PlayerAimController.Tick(m_LastSnapshot);
+            m_PlayerWeaponController.Tick(m_LastSnapshot, Time.deltaTime);
         }
 
         private void LateUpdate()

@@ -1,12 +1,14 @@
 ﻿using _Datas;
+using _Scripts.Player.Definition;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace _Scripts.Player.Controller
 { 
     [RequireComponent(typeof(Animator))]
     public class PlayerAnimationController : MonoBehaviour
     {
-        [SerializeField] PlayerAnimations m_AnimationData;
+        [FormerlySerializedAs("m_AnimationData")] [SerializeField] PlayerAnimationsConfig mAnimationConfigData;
         
         private Animator m_Animator;
         private int m_HorizontalHash;
@@ -65,7 +67,7 @@ namespace _Scripts.Player.Controller
 
         private bool TryGetPlayerAnimation(PlayerStateType state, out PlayerAnimation animation)
         {
-            animation = m_AnimationData.GetClip(state);
+            animation = mAnimationConfigData.GetClip(state);
             if (animation == null)
             {
                 Debug.LogWarning($"[PlayerAnimationController] animation clip is null");

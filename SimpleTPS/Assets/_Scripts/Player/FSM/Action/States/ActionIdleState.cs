@@ -1,4 +1,5 @@
 ﻿using _Scripts.Player.Controller;
+using _Scripts.Player.Definition;
 using _Scripts.Player.Input;
 
 namespace _Scripts.Player.FSM.Action

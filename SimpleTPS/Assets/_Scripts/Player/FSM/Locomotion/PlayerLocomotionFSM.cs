@@ -4,48 +4,29 @@ using UnityEngine;
 
 namespace _Scripts.Player.FSM.Locomotion
 {
-    public sealed class PlayerLocomotionFSM
+    public class PlayerLocomotionFSM
     {
-        public readonly Transform Owner;
-        public readonly PlayerAnimationController Animation;
-        
         public readonly LocomotionIdleState Idle;
         public readonly LocomotionWalkState Walk;
         public readonly LocomotionSprintState Sprint;
         
         private LocomotionBaseState m_Current;
-        private readonly CharacterController m_Controller;
+        private readonly CharacterController m_CharacterController;
+        private readonly PlayerAimController m_AimController;
+        private readonly PlayerAnimationController m_AnimationController;
+        private readonly PlayerStatController m_StatController;
         private readonly Transform m_CameraTransform;
-        
-        private readonly float m_WalkSpeed;
-        private readonly float m_SprintSpeed;
-        private float m_Yaw;
-
-        private readonly float m_LookSensitivity;
-        private readonly float m_TurnSharpness; // 0이면 즉시, >0이면 부드럽게
 
         public PlayerLocomotionFSM(
-            Transform owner,
-            CharacterController controller,
-            PlayerAimController aim,
-            PlayerAnimationController animation,
-            float lookSensitivity,
-            float turnSharpness,
-            float walkSpeed,
-            float sprintSpeed)
+            CharacterController characterController,
+            PlayerAimController aimController,
+            PlayerAnimationController animationController,
+            PlayerStatController statController)
         {
-            Owner = owner;
-            m_Controller = controller;
-            m_CameraTransform = aim.GetCameraTransform();
-            Animation = animation;
-
-            m_WalkSpeed = walkSpeed;
-            m_SprintSpeed = sprintSpeed;
-
-            m_LookSensitivity = lookSensitivity;
-            m_TurnSharpness = turnSharpness;
-
-            m_Yaw = Owner.eulerAngles.y;
+            m_CharacterController = characterController;
+            m_AimController = aimController;
+            m_AnimationController = animationController;
+            m_StatController = statController;
 
             Idle = new LocomotionIdleState(this);
             Walk = new LocomotionWalkState(this);
@@ -57,8 +38,6 @@ namespace _Scripts.Player.FSM.Locomotion
 
         public void Tick(in PlayerInputSnapshot input, float dt)
         {
-            ApplyLookYaw(input.LookDelta.x, dt);
-            
             m_Current.Tick(input, dt);
         }
 
@@ -70,18 +49,23 @@ namespace _Scripts.Player.FSM.Locomotion
             m_Current = next;
             m_Current.Enter();
         }
+
+        public void SetLocomotion(Vector2 move, float speed, float damp, float dt)
+        {
+            m_AnimationController.SetLocomotion(move, speed, damp, dt);
+        }
         
         public void Move(in PlayerInputSnapshot input, float dt, float speed)
         {
             Vector2 move = input.Move;
-            if (move.sqrMagnitude <= 0.0001f)
-                return;
+            if (move.sqrMagnitude <= 0.0001f) return;
 
             // -1~1 입력 정규화(대각선 속도 보정)
             if (move.sqrMagnitude > 1f) move.Normalize();
 
-            Vector3 forward = m_CameraTransform != null ? m_CameraTransform.forward : Owner.forward;
-            Vector3 right   = m_CameraTransform != null ? m_CameraTransform.right   : Owner.right;
+            var camTransform = m_AimController.GetCameraTransform();
+            Vector3 forward = camTransform.forward;
+            Vector3 right   = camTransform.right;
 
             forward.y = 0f;
             right.y = 0f;
@@ -93,31 +77,10 @@ namespace _Scripts.Player.FSM.Locomotion
 
             Vector3 delta = worldDir * speed * dt;
 
-            if (m_Controller != null) m_Controller.Move(delta);
-            else Owner.position += delta; // fallback
+            m_CharacterController.Move(delta);
         }
 
-        public float GetWalkSpeed() => m_WalkSpeed;
-        public float GetSprintSpeed() => m_SprintSpeed;
-
-        public void ApplyLookYaw(float lookDeltaX, float dt)
-        {
-            float yawDelta = lookDeltaX * m_LookSensitivity;
-            if (Mathf.Abs(yawDelta) < 0.00001f) return;
-
-            m_Yaw += yawDelta;
-
-            Quaternion target = Quaternion.Euler(0f, m_Yaw, 0f);
-
-            if (m_TurnSharpness <= 0f)
-            {
-                Owner.rotation = target;
-                return;
-            }
-
-            // 프레임레이트 의존 줄이는 지수감쇠 보간
-            float t = 1f - Mathf.Exp(-m_TurnSharpness * dt);
-            Owner.rotation = Quaternion.Slerp(Owner.rotation, target, t);
-        }
+        public float GetWalkSpeed() => m_StatController.CurrentStats.WalkSpeed;
+        public float GetSprintSpeed() => m_StatController.CurrentStats.SprintSpeed;
     }
 }

@@ -1,4 +1,5 @@
 ﻿using _Scripts.Player.Controller;
+using _Scripts.Player.Definition;
 using _Scripts.Player.Input;
 
 namespace _Scripts.Player.FSM.Action
@@ -22,9 +23,11 @@ namespace _Scripts.Player.FSM.Action
         public override void Tick(in PlayerInputSnapshot input, float dt)
         {
             m_Remaining -= dt;
+            if(input.IsShootPressed) IsComplete = true;
+            
             if (m_Remaining <= 0f)
             {
-                m_Remaining = 0f;
+                IsComplete = true;
             }
         }
     }

@@ -14,17 +14,27 @@ namespace _Scripts.Player.Controller
     
     public class PlayerAimController : MonoBehaviour
     {
+        [SerializeField] private Transform m_PlayerTransform;
+        [SerializeField] private Transform m_CameraPivotTransfrom;
         [SerializeField] private Image m_AimImage;
         [SerializeField] private GameObject m_AimTargetObj;
         [SerializeField] private float m_AimDistance = 10f;
+        
+        [SerializeField] private float m_DefaultLookSpeed = 0.1f;
+        [SerializeField] private float m_ShoulderLookSpeed = 0.1f;
+        [SerializeField] private float m_ADSLookSpeed = 0.1f;
+        
+        [SerializeField] private float m_MinPitch = -60f;
+        [SerializeField] private float m_MaxPitch = 75f;
         [SerializeField] private CinemachineCamera m_DefaultCamera;
         [SerializeField] private CinemachineCamera m_ShoulderCamera;
         [SerializeField] private CinemachineCamera m_ADSCamera;
         
         private Transform m_CameraTransform;
+        private float m_Yaw;
+        private float m_Pitch;
         private PlayerAimType m_PlayerAimType;
         private PlayerInputSnapshot m_PlayerInput;
-        private bool m_IsAimHitted;
 
         private void Awake()
         {
@@ -35,17 +45,31 @@ namespace _Scripts.Player.Controller
         public void Tick(PlayerInputSnapshot playerInput)
         {
             m_PlayerInput = playerInput;
-            UpdateCamera();
-
-            bool isAimHit = Physics.Raycast(m_CameraTransform.position, m_CameraTransform.forward, out RaycastHit hit, m_AimDistance);
-            UpdateAimTarget(isAimHit, hit);
+            UpdateCameraType();
+            UpdateAimTarget();
+            UpdateAim(playerInput.LookDelta);
         }
 
-        private void UpdateCamera()
+        private void UpdateAim(Vector2 lookDelta)
         {
-            if (m_PlayerInput.IsADSMode) m_PlayerAimType = PlayerAimType.ADS;
-            else if (m_PlayerInput.IsShootPressed) m_PlayerAimType = PlayerAimType.Shoulder;
-            else m_PlayerAimType = PlayerAimType.Default;
+            var sensitivity = GetAimSensitivityByCamera();
+            m_Yaw += lookDelta.x * sensitivity;
+            
+            float deltaY = lookDelta.y * sensitivity;
+            m_Pitch = Mathf.Clamp(m_Pitch - deltaY, m_MinPitch, m_MaxPitch);
+            
+            m_PlayerTransform.rotation = Quaternion.Euler(0f, m_Yaw, 0f);
+            m_CameraPivotTransfrom.rotation = Quaternion.Euler(m_Pitch, m_Yaw, 0f);
+        }
+
+        private void UpdateCameraType()
+        {
+            var playerAimTarget = PlayerAimType.Default;
+            if (m_PlayerInput.IsADSMode) playerAimTarget = PlayerAimType.ADS;
+            else if (m_PlayerInput.IsShootPressed) playerAimTarget = PlayerAimType.Shoulder;
+
+            if (m_PlayerAimType == playerAimTarget) return;
+            m_PlayerAimType = playerAimTarget;
 
             m_DefaultCamera.Priority = 0;
             m_ShoulderCamera.Priority = 0;
@@ -70,19 +94,41 @@ namespace _Scripts.Player.Controller
             }
         }
 
-        private void UpdateAimTarget(bool isAimHit, RaycastHit hit)
+        private void UpdateAimTarget()
         {
-            if (m_IsAimHitted != isAimHit)
+            var isHitted = Physics.Raycast(m_CameraTransform.position, m_CameraTransform.forward, out RaycastHit hit,
+                m_AimDistance);
+            
+            Vector3 targetPos = default;
+            if (isHitted)
             {
-                m_IsAimHitted = isAimHit;
-                m_AimImage.color = isAimHit ? Color.red : Color.white;    
+                var hittedObj = hit.collider.gameObject;
+                if (hittedObj.layer == LayerMask.NameToLayer("Enviroment"))
+                {
+                    m_AimImage.color = Color.blue;    
+                }
+                else if (hittedObj.layer == LayerMask.NameToLayer("Enemy"))
+                {
+                    m_AimImage.color = Color.red;
+                }
+                targetPos = hit.point;
+            }
+            else
+            {
+                m_AimImage.color = Color.white;
+                targetPos = m_CameraTransform.position + m_CameraTransform.forward * m_AimDistance;
             }
             
-            Vector3 targetPos = isAimHit
-                ? hit.point
-                : (m_CameraTransform.position + m_CameraTransform.forward * m_AimDistance);
             m_AimTargetObj.transform.position = targetPos;
         }
+        
+        private float GetAimSensitivityByCamera() => m_PlayerAimType switch
+        {
+            PlayerAimType.Default => m_DefaultLookSpeed,
+            PlayerAimType.Shoulder => m_ShoulderLookSpeed,
+            PlayerAimType.ADS => m_ADSLookSpeed,
+            _ => m_DefaultLookSpeed
+        };
         
         public Transform GetCameraTransform() => m_CameraTransform;
     }
