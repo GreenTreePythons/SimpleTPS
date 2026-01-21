@@ -2,6 +2,7 @@
 using _Scripts.Player.Input;
 using _Scripts.Player.Weapon;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace _Scripts.Player.Controller
 {
@@ -13,12 +14,13 @@ namespace _Scripts.Player.Controller
         [Header("Attach")]
         [SerializeField] private Transform m_WeaponAttachTransform;
 
+        [FormerlySerializedAs("m_AimCameraTransform")]
         [Header("References")]
-        [SerializeField] private Transform m_AimCameraTransform;
+        [SerializeField] private Transform m_AimCameraTarget;
 
         private WeaponController m_CurrentWeaponController;
         private PlayerWeaponConfig m_CurrentWeaponConfig;
-        private GameObject m_CurrentWeaponInstance;
+        private GameObject m_CurrentWeaponObj;
 
         public WeaponController CurrentWeaponController => m_CurrentWeaponController;
         public PlayerWeaponConfig CurrentWeaponConfig => m_CurrentWeaponConfig;
@@ -27,17 +29,6 @@ namespace _Scripts.Player.Controller
         {
             if (m_DefaultWeaponConfig != null)
                 Equip(m_DefaultWeaponConfig);
-        }
-
-        /// <summary>
-        /// Aim 카메라 Transform을 외부(PlayerAimController 등)에서 주입하고 싶을 때 사용.
-        /// </summary>
-        public void SetAimCameraTransform(Transform cameraTransform)
-        {
-            m_AimCameraTransform = cameraTransform;
-
-            if (m_CurrentWeaponController != null)
-                m_CurrentWeaponController.SetAimCameraTransform(m_AimCameraTransform);
         }
 
         public void Equip(PlayerWeaponConfig weaponConfig)
@@ -67,12 +58,12 @@ namespace _Scripts.Player.Controller
 
             Transform parent = (m_WeaponAttachTransform != null) ? m_WeaponAttachTransform : transform;
 
-            m_CurrentWeaponInstance = Instantiate(weaponConfig.WeaponPrefab, parent);
-            m_CurrentWeaponInstance.transform.localPosition = Vector3.zero;
-            m_CurrentWeaponInstance.transform.localRotation = Quaternion.identity;
-            m_CurrentWeaponInstance.transform.localScale = Vector3.one;
+            m_CurrentWeaponObj = Instantiate(weaponConfig.WeaponPrefab, parent);
+            m_CurrentWeaponObj.transform.localPosition = Vector3.zero;
+            m_CurrentWeaponObj.transform.localRotation = Quaternion.identity;
+            m_CurrentWeaponObj.transform.localScale = Vector3.one;
 
-            m_CurrentWeaponController = m_CurrentWeaponInstance.GetComponent<WeaponController>();
+            m_CurrentWeaponController = m_CurrentWeaponObj.GetComponent<WeaponController>();
             if (m_CurrentWeaponController == null)
             {
                 Debug.LogError($"WeaponPrefab '{weaponConfig.WeaponPrefab.name}' has no WeaponController component.");
@@ -80,16 +71,13 @@ namespace _Scripts.Player.Controller
                 m_CurrentWeaponConfig = null;
                 return;
             }
-
-            if (m_AimCameraTransform != null)
-                m_CurrentWeaponController.SetAimCameraTransform(m_AimCameraTransform);
         }
 
         public void Tick(PlayerInputSnapshot inputSnapshot, float dt)
         {
             if (m_CurrentWeaponController == null) return;
 
-            m_CurrentWeaponController.Tick(dt, inputSnapshot.IsShootPressed, inputSnapshot.IsReloadPressed, inputSnapshot.IsADSMode);
+            m_CurrentWeaponController.Tick(dt, inputSnapshot.IsShootPressed, inputSnapshot.IsReloadPressed, inputSnapshot.IsADSMode, m_AimCameraTarget.position);
         }
 
         public int GetCurrentMaxAmmo() => m_CurrentWeaponConfig.MagazineSize;
@@ -98,10 +86,10 @@ namespace _Scripts.Player.Controller
 
         private void ClearWeaponInstance()
         {
-            if (m_CurrentWeaponInstance != null)
+            if (m_CurrentWeaponObj != null)
             {
-                Destroy(m_CurrentWeaponInstance);
-                m_CurrentWeaponInstance = null;
+                Destroy(m_CurrentWeaponObj);
+                m_CurrentWeaponObj = null;
             }
 
             m_CurrentWeaponController = null;

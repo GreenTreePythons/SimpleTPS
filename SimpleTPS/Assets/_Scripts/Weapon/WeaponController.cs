@@ -22,18 +22,16 @@ namespace _Scripts.Player.Weapon
         [Header("Raycast")]
         [SerializeField] private LayerMask m_HitMask = ~0;
         [SerializeField] private float m_Range = 200f;
-
-        [Header("Tracer (TrailRenderer)")]
-        [SerializeField] private TrailRenderer m_TracerPrefab;
-        [SerializeField] private int m_TracerPoolSize = 16;
-        [SerializeField] private float m_TracerSpeed = 600f;
-
-        private Transform m_AimCameraTransform;
+        
+        [Header("Debug Shot Ray")]
+        [SerializeField] private LineRenderer m_DebugRayLine;
+        [SerializeField] private float m_DebugRayVisibleTime = 0.05f;
+        private float m_DebugRayTimer;
+        private Vector3 m_AimTargetPos;
+        //
 
         private readonly WeaponRuntimeState m_Runtime = new();
-        private readonly Queue<TrailRenderer> m_TracerPool = new();
         
-        private float m_TracerTimeRemaining;
         private AudioSource m_AudioSource;
 
         public PlayerWeaponConfig WeaponConfig => m_WeaponConfig;
@@ -52,31 +50,36 @@ namespace _Scripts.Player.Weapon
             m_Runtime.ReserveAmmo = int.MaxValue;
             
             m_AudioSource = GetComponent<AudioSource>();
-            InitializeTracerPool();
         }
         
-        private void InitializeTracerPool()
+        //
+        private void Update()
         {
-            if (m_TracerPrefab == null) return;
-
-            for (int i = 0; i < m_TracerPoolSize; i++)
+            if (m_DebugRayLine != null && m_DebugRayLine.enabled)
             {
-                TrailRenderer tracer = Instantiate(m_TracerPrefab);
-                tracer.gameObject.SetActive(false);
-                tracer.emitting = false;
-                m_TracerPool.Enqueue(tracer);
+                m_DebugRayTimer -= Time.deltaTime;
+                if (m_DebugRayTimer <= 0f)
+                    m_DebugRayLine.enabled = false;
             }
         }
-
-        public void SetAimCameraTransform(Transform cameraTransform)
+        private void DrawDebugRay(Vector3 start, Vector3 end)
         {
-            m_AimCameraTransform = cameraTransform;
+            if (m_DebugRayLine == null)
+                return;
+
+            m_DebugRayLine.enabled = true;
+            m_DebugRayLine.positionCount = 2;
+            m_DebugRayLine.SetPosition(0, start);
+            m_DebugRayLine.SetPosition(1, end);
+
+            m_DebugRayTimer = m_DebugRayVisibleTime;
         }
+        //
 
         /// <summary>
         /// Player 쪽에서 매 프레임 호출(입력 값을 정제해서 전달)
         /// </summary>
-        public void Tick(float dt, bool shootHeld, bool reloadPressed, bool isAds)
+        public void Tick(float dt, bool shootHeld, bool reloadPressed, bool isAds, Vector3 aimTargetPos)
         {
             if (m_WeaponConfig == null)
                 return;
@@ -119,6 +122,8 @@ namespace _Scripts.Player.Weapon
                 }
             }
 
+            m_AimTargetPos = aimTargetPos;
+
             m_Runtime.WasTriggerHeld = shootHeld;
         }
 
@@ -144,8 +149,8 @@ namespace _Scripts.Player.Weapon
             PlayOneShot(m_FireClip);
             
             Vector3 start = m_MuzzleTransform.position;
-            Vector3 end = start + m_MuzzleTransform.forward * m_Range;
-            PlayTracer(start, end);
+            // Debug 시각화: 히트스캔 레이를 보여줌
+            DrawDebugRay(start, m_AimTargetPos);
 
             // 3) 데미지 적용(최소 구현: 인터페이스/컴포넌트는 후속)
             // 예: hit.collider.GetComponent<IDamageable>()?.ApplyDamage(m_WeaponConfig.Damage);
@@ -194,49 +199,7 @@ namespace _Scripts.Player.Weapon
             m_MuzzleVfx.transform.position = m_MuzzleTransform.position;
             m_MuzzleVfx.Play(true);
         }
-
-        private void PlayTracer(Vector3 start, Vector3 end)
-        {
-            if (m_TracerPool.Count == 0) return;
-
-            TrailRenderer tracer = m_TracerPool.Dequeue();
-            tracer.gameObject.SetActive(true);
-
-            tracer.emitting = false;
-            tracer.Clear();
-            tracer.transform.position = start;
-            
-            StartCoroutine(CoPlay());
-            IEnumerator CoPlay()
-            {
-                yield return null;
-                tracer.emitting = true;
-                yield return _CoMoveTracer(tracer, end);
-            }
-            IEnumerator _CoMoveTracer(TrailRenderer tracer, Vector3 end)
-            {
-                Vector3 start = tracer.transform.position;
-                float distance = Vector3.Distance(start, end);
-                float duration = distance / Mathf.Max(1f, m_TracerSpeed);
-
-                float t = 0f;
-                while (t < duration)
-                {
-                    t += Time.deltaTime;
-                    tracer.transform.position = Vector3.Lerp(start, end, t / duration);
-                    yield return null;
-                }
-
-                tracer.transform.position = end;
-
-                yield return new WaitForSeconds(tracer.time);
-
-                tracer.emitting = false;
-                tracer.gameObject.SetActive(false);
-                m_TracerPool.Enqueue(tracer);
-            }
-        }
-
+        
         private void PlayOneShot(AudioClip clip)
         {
             if (clip == null || m_AudioSource == null)

@@ -693,7 +693,7 @@ Transform:
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.81, y: 1.85, z: -4}
+  m_LocalPosition: {x: 0.3, y: 2, z: -4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1281,7 +1281,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a916f14b14c428fa1a9eaf0afe9c6e2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::_Scripts.Player.Input.PlayerInputUIBinder
-  m_ShootButton: {fileID: 1668440065}
+  m_LeftShootButton: {fileID: 869945464}
+  m_RightShootButton: {fileID: 1668440065}
   m_ReloadButton: {fileID: 1969593231}
   m_AimButton: {fileID: 180221554}
   m_MoveJoystick: {fileID: 1286859463}
@@ -3051,7 +3052,7 @@ Transform:
   m_GameObject: {fileID: 1642845920}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.36, y: 0.120000005, z: -2}
+  m_LocalPosition: {x: -0.14999998, y: 0.26999998, z: -2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3112,8 +3113,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 625c14eee3ad46c99df7c7c891ef668a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineThirdPersonFollow
-  Damping: {x: 0, y: 0, z: 0}
-  ShoulderOffset: {x: 0.81, y: 1.45, z: 0}
+  Damping: {x: 0.1, y: 0.5, z: 0.3}
+  ShoulderOffset: {x: 0.3, y: 1.6, z: 0}
   VerticalArmLength: 0.4
   CameraSide: 1
   CameraDistance: 4
@@ -3708,7 +3709,7 @@ MonoBehaviour:
     LookAtTarget: {fileID: 0}
     CustomLookAtTarget: 0
   Lens:
-    FieldOfView: 60.000004
+    FieldOfView: 17
     OrthographicSize: 5
     NearClipPlane: 0.3
     FarClipPlane: 1000
@@ -3736,7 +3737,7 @@ Transform:
   m_GameObject: {fileID: 1933158910}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.49, y: 0.1500001, z: 0.51}
+  m_LocalPosition: {x: 0.15000004, y: -0.03000009, z: -2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3755,10 +3756,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineThirdPersonFollow
   Damping: {x: 0.1, y: 0.5, z: 0.3}
-  ShoulderOffset: {x: 0.94, y: 1.45, z: 0.57}
-  VerticalArmLength: 0.43
+  ShoulderOffset: {x: 0.6, y: 1.3, z: 0}
+  VerticalArmLength: 0.4
   CameraSide: 1
-  CameraDistance: 2.06
+  CameraDistance: 4
   AvoidObstacles:
     Enabled: 0
     CollisionFilter:
@@ -4006,7 +4007,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::_Scripts.Player.Controller.PlayerWeaponController
   m_DefaultWeaponConfig: {fileID: 11400000, guid: d59a53271da68a3418da5ff2eb4d6cc2, type: 2}
   m_WeaponAttachTransform: {fileID: 283975466}
-  m_AimCameraTransform: {fileID: 1021040371}
+  m_AimCameraTarget: {fileID: 1021040371}
 --- !u!1 &1969593226
 GameObject:
   m_ObjectHideFlags: 0

@@ -38,7 +38,12 @@ namespace _Scripts.Player.Controller
         {
             if (value.isPressed) SetADSMode();
         }
-        private void OnShoot(InputValue value) => SetShoot(value.isPressed);
+
+        private void OnShoot(InputValue value)
+        {
+            SetShoot(value.isPressed);   
+        }
+        
         private void OnReload(InputValue value)
         {
             if (value.isPressed) RequestReload();

@@ -2,12 +2,14 @@
 using _Scripts.UI;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace _Scripts.Player.Input
 {
     public sealed class PlayerInputUIBinder : MonoBehaviour
     {
-        [SerializeField] private UIHoldButton m_ShootButton;
+        [SerializeField] private UIHoldButton m_LeftShootButton;
+        [SerializeField] private UIHoldButton m_RightShootButton;
         [SerializeField] private UITapButton  m_ReloadButton;
         [SerializeField] private UIToggleButton  m_AimButton;
         [SerializeField] private Joystick m_MoveJoystick;
@@ -27,7 +29,8 @@ namespace _Scripts.Player.Input
         {
             if (m_PlayerInputController == null) return;
 
-            if (m_ShootButton != null) m_ShootButton.PressedChanged += OnShootPressedChanged;
+            if (m_LeftShootButton != null) m_LeftShootButton.PressedChanged += OnShootPressedChanged;
+            if (m_RightShootButton != null) m_RightShootButton.PressedChanged += OnShootPressedChanged;
             if (m_ReloadButton != null) m_ReloadButton.Clicked += OnReloadClicked;
             if (m_AimButton != null) m_AimButton.Clicked += OnAimClicked;
             if (m_MoveJoystick != null) m_MoveJoystick.OnJoystickDirection += OnMoveJoystickDirection;
@@ -36,7 +39,8 @@ namespace _Scripts.Player.Input
 
         private void Unbind()
         {
-            if (m_ShootButton != null) m_ShootButton.PressedChanged -= OnShootPressedChanged;
+            if (m_LeftShootButton != null) m_LeftShootButton.PressedChanged -= OnShootPressedChanged;
+            if (m_RightShootButton != null) m_RightShootButton.PressedChanged -= OnShootPressedChanged;
             if (m_ReloadButton != null) m_ReloadButton.Clicked -= OnReloadClicked;
             if (m_AimButton != null) m_AimButton.Clicked -= OnAimClicked;
             if (m_MoveJoystick != null) m_MoveJoystick.OnJoystickDirection -= OnMoveJoystickDirection;
